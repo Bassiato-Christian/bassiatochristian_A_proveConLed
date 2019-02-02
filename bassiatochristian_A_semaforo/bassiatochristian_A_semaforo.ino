@@ -6,11 +6,14 @@ void setup() {
   pinMode(3,OUTPUT);
   pinMode(2,OUTPUT);
   pinMode(7,OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Monitor Seriale Attivato");
+  Serial.println("Inserisci il numero di lampeggi");
 }
 int tempoVerdeLampeggia = 250;
 int tempoRosso = 3000;
 int tempoGiallo = 2000;
-int ripetizioniVerdeLampeggia = 4;
+int ripetizioniVerdeLampeggia = 0;
 int pinVerde1 = 4;
 int pinVerde2 = 7;
 int pinGiallo1 = 5;
@@ -18,8 +21,22 @@ int pinGiallo2 = 2;
 int pinRosso1 = 6;
 int pinRosso2 = 3;
 int zero = 0;
+String incomingByte;
+bool lampeggioInserito = false;
 void loop() {
   // put your main code here, to run repeatedly:
+  while (lampeggioInserito == false) {
+      // read the incoming byte:
+      incomingByte = Serial.readString();
+      if (Serial.available() > 0)
+      {
+        lampeggioInserito = true;
+      }
+      // say what you got:
+      Serial.print("Numero di lampeggi ricevuto: ");
+      Serial.println(incomingByte.toInt());
+  }
+  ripetizioniVerdeLampeggia = incomingByte.toInt() + 1;
   RossoVerdeAcceso(pinRosso1,pinVerde2);
   VerdeLampeggia(pinVerde2);
   RossoVerdeSpento(pinRosso1,pinVerde2);
